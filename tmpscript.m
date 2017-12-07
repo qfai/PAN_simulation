@@ -1,17 +1,32 @@
 generatedimg=[];
-sample_number=1000;
+%[pixel_point.x,pixel_point.y]=ginput(15);
+minx=featureU.maxYpoint(14,2);
+%minx=featureU.minYpoint(14,2);
+pixel_count=1;
+for tooth_number=14:-1:9
+maxx=featureU.minYpoint(tooth_number,2);
+sample_number=round(pixel_point.x(pixel_count+1)-pixel_point.x(pixel_count));
+pixel_count=pixel_count+1;
  %first assume uniform sample
- for i=minx:(0-minx)/sample_number:0 %half
+ for i=minx:(maxx-minx)/sample_number:maxx %half
      tmpimg=[];
     y=curve2.a*i*i*i*i+curve2.b*i*i*i+curve2.d*i+curve2.e;
     dy=4*curve2.a*i*i*i+3*curve2.b*i*i+curve2.d;
-    if abs(dy)<=0.0001
+    if(y<tmp.XLimits(1))
+        
+        continue;
+    end
+    if abs(dy)<=0.2
+        point=transformpoint([0,i],tmp,scalez);
+        tmpimg=permute(slices(:,round(point(2)),:),[3,1,2]);
+         generatedimg=[generatedimg,sum(tmpimg,2)];
         continue;
     else
-    k=-1/(dy);
-    x0=[0,k*(0-i)+y;tmp.YLimits(1),k*(tmp.YLimits(1)-i)+y];
+        k=-1/(dy);
+        x0=[0,k*(0-i)+y;tmp.YLimits(1),k*(tmp.YLimits(1)-i)+y];
     end
     theta=180-atan(k);
+    %line rasterization
     prepoint=round(transformpoint([x0(2,2),x0(2,1)],tmp,scalez));
     for x=x0(2,1):x0(1,1)
         
@@ -21,7 +36,7 @@ sample_number=1000;
             continue;
         end
         if(round(point(1))<=0)
-            continue;
+            break;
         end
         if(point==prepoint)
          x0(2,2)=x0(2,2)+k;
@@ -61,7 +76,7 @@ sample_number=1000;
                 xx=prepoint(1);
              end
             for y=beginx:endx
-                tmpimg=[tmpimg,permute(slices(round(xx+1),y,:),[3,1,2])];%%%%%%%%%%%%%%%
+                tmpimg=[tmpimg,permute(slices(round(xx),y,:),[3,1,2])];%%%%%%%%%%%%%%%
                  xx=xx+1/linek;
             end
         end
@@ -70,17 +85,21 @@ sample_number=1000;
        prepoint=point;
         
     end
-    xxx=sum(tmpimg,2);%[xxx,xp]=radon(tmpimg,theta);
-    if(size(xxx,1)>size(generatedimg,1))
-        newgeimg=zeros(size(xxx,1),size(generatedimg,2));
-        newgeimg(1:size(generatedimg,1),1:size(generatedimg,2))=generatedimg;
-        generatedimg=newgeimg;
-         generatedimg=[generatedimg,xxx];
-    else
-        xx=zeros(size(generatedimg,1),1);
-        xx(1:size(xxx,1),1)=xxx;
-         generatedimg=[generatedimg,xx];
-    end
-   
+%    xxx=sum(tmpimg,2);%[xxx,xp]=radon(tmpimg,theta);
+%     if(size(xxx,1)>size(generatedimg,1))
+%         newgeimg=zeros(size(xxx,1),size(generatedimg,2));
+%         newgeimg(1:size(generatedimg,1),1:size(generatedimg,2))=generatedimg;
+%         generatedimg=newgeimg;
+%          generatedimg=[generatedimg,xxx];
+%     else
+%         xx=zeros(size(generatedimg,1),1);
+%         xx(1:size(xxx,1),1)=xxx;
+%          generatedimg=[generatedimg,xx];
+%     end
+   generatedimg=[generatedimg,sum(tmpimg,2)];
  end
+ 
+ minx=maxx;
+end
  imshow(generatedimg);
+ 
