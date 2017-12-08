@@ -1,7 +1,7 @@
 function [ mesh,center ] = rotate_mesh( mesh,axes,theta,varargin )
 %UNTITLED4 此处显示有关此函数的摘要
 %   此处显示详细说明
-if nargin==3
+if nargin==4
     center=varargin{1};
 else
     center=sum(mesh)/size(mesh,1);
