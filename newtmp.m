@@ -30,7 +30,7 @@ for i=1:5
     
     str=['LR',num2str(i)];
     index=transfor_axes(str);
-    xaxe=axesU(index,:);
+    xaxe=axesL(index,:);
     theta=acos([xaxe(1:2),0]*[1,0,0]'/norm([xaxe(1:2),0],2));
     % arbitrary rotation.
     m=mesh.LR{i};
@@ -39,7 +39,7 @@ for i=1:5
     
      str=['LL',num2str(i)];
     index=transfor_axes(str);
-    xaxe=axesU(index,:);
+    xaxe=axesL(index,:);
     theta=acos([xaxe(1:2),0]*[1,0,0]'/norm([xaxe(1:2),0],2));
     % arbitrary rotation.
     m=mesh.LL{i};
@@ -70,7 +70,7 @@ for i=6:7
     
     str=['LR',num2str(i)];
     index=transfor_axes(str);
-    xaxe=axesU(index,:);
+    xaxe=axesL(index,:);
     theta=acos([xaxe(1:2),0]*[1,0,0]'/norm([xaxe(1:2),0],2));
     m=mesh.LR{i};
     [mesh.LR{i},center]=rotate_mesh(m,axesU(index+2,:),theta);
@@ -79,7 +79,7 @@ for i=6:7
     
      str=['LL',num2str(i)];
     index=transfor_axes(str);
-    xaxe=axesU(index,:);
+    xaxe=axesL(index,:);
     theta=acos([xaxe(1:2),0]*[1,0,0]'/norm([xaxe(1:2),0],2));
     % arbitrary rotation.
     m=mesh.LL{i};
