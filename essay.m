@@ -115,10 +115,10 @@ Mesh.LR={};
 Mesh.UL={};
 Mesh.UR={};
 for i=1:7
-    Mesh.LL{i}=LL{i}*Ri+repmat(Ti,[size(LL{i},1),1]);
-    Mesh.UL{i}=UL{i}*Rs+repmat(Ts,[size(UL{i},1),1]);
-    Mesh.LR{i}=LR{i}*Ri+repmat(Ti,[size(LR{i},1),1]);
-    Mesh.UR{i}=UR{i}*Rs+repmat(Ts,[size(UR{i},1),1]);
+    Mesh.LL{i}=LL{i}*Ri;
+    Mesh.UL{i}=UL{i}*Rs;
+    Mesh.LR{i}=LR{i}*Ri;
+    Mesh.UR{i}=UR{i}*Rs;
 end
 
 % figure;
@@ -169,7 +169,6 @@ pop=pop(:,2);
 % pop=[featureL.minYpoint(:,2);featureL.maxYpoint(:,2);featureU.minYpoint(:,2);featureU.maxYpoint(:,2)]*SCALE;
 % cdata=[featureL.minYpoint(:,1);featureL.maxYpoint(:,1);featureU.minYpoint(:,1);featureU.maxYpoint(:,1)]*SCALE;
  fo = fitoptions('Method','NonlinearLeastSquares');
- fo.Normalize='on';
 g = fittype('a*x^4+b*x^3+d*x+e','option',fo);
 %g = fittype('a*x^2+b*x+c','option',fo);
  [curve2,gof2] = fit(pop,cdata,g);
@@ -183,20 +182,59 @@ plot(curve2,'m')
 pixel_size=0.1;
 
 
+pixel_point.x=1.0e+03 *[
+
+    0.8275
+    0.9575
+    1.0815
+    1.1575
+    1.2315
+    1.3115
+    1.3815
+    1.4595
+    1.5395
+    1.6095
+    1.6935
+    1.7755
+    1.8595
+    1.9835
+    2.1255];
+pixel_point.y=[  613.0000
+  627.0000
+  639.0000
+  661.0000
+  671.0000
+  671.0000
+  673.0000
+  671.0000
+  673.0000
+  673.0000
+  677.0000
+  677.0000
+  683.0000
+  653.0000
+  639.0000];
+
+
+
+
 tmpscript;
 
-BB=flipud(generatedimg);
-Uimg=BB;
-Umark=markedpoint;
-imshow(BB)
-hold on ;scatter(markedpoint(:,1),size(Uimg,1)-markedpoint(:,2),'r*');hold off
 
-
+BB=(generatedimg);
+figure;
+imshow(flip(BB));
+markindex=find(BB>=255);
+ marked=zeros(size(markindex,1),2);
+ marked(:,1)=floor(markindex(:)/size(BB,1));
+ marked(:,2)=markindex-marked(:,1)*size(BB,1)
+ hold on ;scatter(marked(:,1),size(BB,1)-marked(:,2),'r*');hold off
+ 
 index=find(BB>1);
 Upoints=zeros(size(index,1),2);
-Upoints(:,2)=floor(mod(index,size(BB,1)))+pixel_point.y(1)-size(BB,1)/4;
+%Upoints(:,2)=floor(mod(index,size(BB,1)))+ Ts(3)-max(markedpoint(:,2));
+Upoints(:,2)=floor(mod(index,size(BB,1)))+min(U(:,2))-min(marked(:,2));
 Upoints(:,1)=floor((index-1)/size(BB,1))+1+pixel_point.x(1);
- %mixshow
 
 
 
@@ -209,45 +247,47 @@ vertex=[];
 for i=1:7
     vertex=[vertex;Mesh.LL{i};Mesh.LR{i}];
 end
-tmp=pointCloud(vertex);
+tmpl=pointCloud(vertex);
 scalez=1;
-ZLimits=floor((tmp.ZLimits(2)-tmp.ZLimits(1))*scalez)+1;
-XLimits=floor((tmp.XLimits(2)-tmp.XLimits(1))*scalez)+1;
-YLimits=floor((tmp.YLimits(2)-tmp.YLimits(1))*scalez)+1;
-slices=zeros(XLimits,YLimits,ZLimits);
+ ZLimits=floor((tmpl.ZLimits(2)-tmpl.ZLimits(1))*scalez)+1;
+% XLimits=floor((tmp.XLimits(2)-tmp.XLimits(1))*scalez)+1;
+% YLimits=floor((tmp.YLimits(2)-tmp.YLimits(1))*scalez)+1;
+slices=zeros(size(slices,1),size(slices,2),ZLimits);
 for i=1:size(vertex,1)
-    slices(floor((vertex(i,1)-tmp.XLimits(1))*scalez+1),floor((vertex(i,2)-tmp.YLimits(1))*scalez+1),floor((vertex(i,3)-tmp.ZLimits(1))*scalez+1))=1;
+    slices(floor((vertex(i,1)-tmp.XLimits(1))*scalez+1),floor((vertex(i,2)-tmp.YLimits(1))*scalez+1),floor((vertex(i,3)-tmpl.ZLimits(1))*scalez+1))=1;
 end
 
 markpoint=featureL.point*Ri;
 for i=1:size(markpoint,1)
     
- slices(floor((markpoint(i,1)-tmp.XLimits(1))*scalez+1),floor((markpoint(i,2)-tmp.YLimits(1))*scalez+1),floor((markpoint(i,3)-tmp.ZLimits(1))*scalez+1))=255;
+ slices(floor((markpoint(i,1)-tmp.XLimits(1))*scalez+1),floor((markpoint(i,2)-tmp.YLimits(1))*scalez+1),floor((markpoint(i,3)-tmpl.ZLimits(1))*scalez+1))=255;
 end
 
 
 
 tmpscript;
 
-BB=flipud(generatedimg);
-Limg=BB;
-Lmark=markedpoint;
+
+BB=(generatedimg);
+
+markindex=find(BB>=255);
+ marked=zeros(size(markindex,1),2);
+ marked(:,1)=floor(markindex(:)/size(BB,1));
+ marked(:,2)=markindex-marked(:,1)*size(BB,1);
 figure;
-imshow(BB)
-hold on ;scatter(markedpoint(:,1),size(Limg,1)-markedpoint(:,2),'r*');hold off
-
-
-
+imshow(flip(BB));
+ hold on ;scatter(marked(:,1),size(BB,1)-marked(:,2),'r*');hold off
+ 
 index=find(BB>1);
 Lpoints=zeros(size(index,1),2);
-Lpoints(:,2)=floor(mod(index,size(BB,1)))+Ts(3)-size(BB,1)/4;
+%Upoints(:,2)=floor(mod(index,size(BB,1)))+ Ts(3)-max(markedpoint(:,2));
+Lpoints(:,2)=floor(mod(index,size(BB,1)))+max(L(:,2))-max(marked(:,2));
 Lpoints(:,1)=floor((index-1)/size(BB,1))+1+pixel_point.x(1);
 
-%  figure;
-%   scatter(Lpoints(:,1),Lpoints(:,2));hold on;
-% scatter(Upoints(:,1),Upoints(:,2));hold on;
-% imshow(paranoimg);alpha(0.5);axis on
- figure;imshow(paranoimg);axis on;hold on;
-  scatter(Lpoints(:,1),Lpoints(:,2));
-scatter(Upoints(:,1),Upoints(:,2));hold on;
+
+
+ figure;
+  scatter(Lpoints(:,1),size(paranoimg,1)-Lpoints(:,2));hold on;
+scatter(Upoints(:,1),size(paranoimg,1)-Upoints(:,2));hold on;
+f=imshow(paranoimg);set(f,'AlphaData',0.5);axis on
 
