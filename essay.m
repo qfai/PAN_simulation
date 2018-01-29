@@ -81,7 +81,7 @@ x0 = [10,1,0,1,0];
 x = fsolve(fun,x0);
 
 param=x;
-scale=param(1);
+scale=param(1)
 a=param(2);%cos(alpha)
 b=param(3);
 c=param(4);
@@ -90,7 +90,9 @@ Rs=scale*[1,0,0;0,a,-1*b;0,b,a]*[c,0,d;0,1,0;-d,0,c];
 transed=pointU*Rs;
 Ts=[0,U(1,1)-transed(1,2),U(1,2)-transed(1,3)];
 
-
+% pointU=featureL.point;
+% B=L(:,2)-repmat(L(1,2),[size(L,1),1]);
+% fun = @regifun;
 pointU=pointU*Rs;
 B=U(:,2)-L(:,2);
 fun = @regifun2;
@@ -99,7 +101,7 @@ fun = @regifun2;
 % fun = @regifun;
 x0 = [10,1,0,1,0]; 
 x = fsolve(fun,x0);
-scale=param(1);
+scale=param(1)
 a=param(2);%cos(alpha)
 b=param(3);
 c=param(4);
@@ -225,10 +227,10 @@ BB=(generatedimg);
 figure;
 imshow(flip(BB));
 markindex=find(BB>=255);
- marked=zeros(size(markindex,1),2);
- marked(:,1)=floor(markindex(:)/size(BB,1));
- marked(:,2)=markindex-marked(:,1)*size(BB,1)
- hold on ;scatter(marked(:,1),size(BB,1)-marked(:,2),'r*');hold off
+ markedu=zeros(size(markindex,1),2);
+ markedu(:,1)=floor(markindex(:)/size(BB,1));
+ markedu(:,2)=markindex-markedu(:,1)*size(BB,1);
+ hold on ;scatter(markedu(:,1),size(BB,1)-markedu(:,2),'r*');hold off
  
 index=find(BB>1);
 Upoints=zeros(size(index,1),2);
@@ -253,14 +255,24 @@ scalez=1;
 % XLimits=floor((tmp.XLimits(2)-tmp.XLimits(1))*scalez)+1;
 % YLimits=floor((tmp.YLimits(2)-tmp.YLimits(1))*scalez)+1;
 slices=zeros(size(slices,1),size(slices,2),ZLimits);
+
+ featureU.minYpoint(14,2)=featureU.maxYpoint(13,2);
+ projectionpoint=[featureU.maxYpoint(14,:);featureU.minYpoint(14:-1:8,:);featureU.minYpoint(1:7,:)]*Rs;
+ dy=0;
+i=1;
+[projectionpoint(i,2),projectionpoint(i,1),dy]=get_nearest_point( [projectionpoint(i,2),projectionpoint(i,1)],curve2);
+xoffset=-U(18,1)+L(18,1)*dy/sqrt(dy*dy+1);
 for i=1:size(vertex,1)
-    slices(floor((vertex(i,1)-tmp.XLimits(1))*scalez+1),floor((vertex(i,2)-tmp.YLimits(1))*scalez+1),floor((vertex(i,3)-tmpl.ZLimits(1))*scalez+1))=1;
+    slices(floor((vertex(i,1)-tmp.XLimits(1)+xoffset)*scalez+1),floor((vertex(i,2)-tmp.YLimits(1))*scalez+1),floor((vertex(i,3)-tmpl.ZLimits(1))*scalez+1))=1;
 end
+
+
+
 
 markpoint=featureL.point*Ri;
 for i=1:size(markpoint,1)
     
- slices(floor((markpoint(i,1)-tmp.XLimits(1))*scalez+1),floor((markpoint(i,2)-tmp.YLimits(1))*scalez+1),floor((markpoint(i,3)-tmpl.ZLimits(1))*scalez+1))=255;
+ slices(floor((markpoint(i,1)-tmp.XLimits(1)+xoffset)*scalez+1),floor((markpoint(i,2)-tmp.YLimits(1))*scalez+1),floor((markpoint(i,3)-tmpl.ZLimits(1))*scalez+1))=255;
 end
 
 
@@ -289,5 +301,7 @@ Lpoints(:,1)=floor((index-1)/size(BB,1))+1+pixel_point.x(1);
  figure;
   scatter(Lpoints(:,1),size(paranoimg,1)-Lpoints(:,2));hold on;
 scatter(Upoints(:,1),size(paranoimg,1)-Upoints(:,2));hold on;
+scatter(marked(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(marked(:,2)+max(L(:,2))-max(marked(:,2))),'r*');
+scatter(U(:,1),size(paranoimg,1)-U(:,2),'b*');
+scatter(L(:,1),size(paranoimg,1)-L(:,2),'b*');
 f=imshow(paranoimg);set(f,'AlphaData',0.5);axis on
-
