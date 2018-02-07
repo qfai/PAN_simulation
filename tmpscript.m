@@ -42,7 +42,7 @@ markedpoint=[];
     else
         k=-1*(dy);
         point1=[tmp.XLimits(2)-tmp.XLimits(1),-1];
-        point2=[-1,1];
+        point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
         point1=line_point(nowpoint,k,point1);
         point2=line_point(nowpoint,k,point2);
         if(floor(point1(2))<=0)
@@ -120,7 +120,8 @@ pixel_count=pixel_count+1;
         end
         
         point1=[round((tmp.XLimits(2)-tmp.XLimits(1))),-1];
-        point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
+       % point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
+       point2=[-1,1];
         point1=line_point(nowpoint,k,point1);
         point2=line_point(nowpoint,k,point2);
         if(floor(point2(1))<0||floor(point2(1))>round((tmp.XLimits(2)-tmp.XLimits(1))))

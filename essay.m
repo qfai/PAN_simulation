@@ -1,7 +1,7 @@
 
-name='qjh'
+name='sx'
 savemesh=1;
-meshpath='D:\volume\volume_data\data\2_000006qianjiahong\c.repairing\';
+%meshpath='D:\volume\volume_data\data\2_000006qianjiahong\c.repairing\';
 load_all;
 
 global pointU;
@@ -11,7 +11,7 @@ pointU=featureU.point;
 pointL=featureL.point;
 B=U(:,2)-repmat(U(1,2),[size(U,1),1]);
 fun = @regifun;
-x0 = [10,1,0,1,0]; 
+x0 = [25,1,0,1,0]; 
 x = fsolve(fun,x0);
 
 param=x;
@@ -33,7 +33,7 @@ fun = @regifun2;
 % pointU=pointL;
 % B=L(:,2)-repmat(L(1,2),[size(L,1),1]);
 % fun = @regifun;
-x0 = [10,1,0,1,0]; 
+x0 = [25,1,0,1,0]; 
 x = fsolve(fun,x0);
 scale=param(1)
 a=param(2);%cos(alpha)

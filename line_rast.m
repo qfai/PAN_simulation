@@ -1,7 +1,20 @@
 function [ img ] = line_rast(slices,point1,point2,k)
 % %line rasterization
 %   此处显示详细说明
-     img=[];
+if(point1(1)==0)
+    point1(1)=1;
+end
+if(point2(1)==0)
+    point2(1)=1;
+end
+if(point1(2)==0)
+    point1(2)=1;
+end
+if(point2(2)==0)
+    point2(2)=1;
+end
+k=(point2(2)-point1(2))/(point2(1)-point1(1));
+img=[];
     if(abs(k)<1)
         if(point1(1)>point2(1))
             tmp=point1;

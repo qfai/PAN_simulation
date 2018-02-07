@@ -91,7 +91,17 @@ scatter3(refpoint(:,1),refpoint(:,2),refpoint(:,3),'r*');
 
 
 fid=fopen([path,'\','root.txt'],'w');
+
+map=[1,3,5:15,17;[7:-1:1,1:7]];
 for i=1:size(rootpoint,1)
+    index=find(map(1,:)==i);
+    if(size(index)>0)
+        if(i>9)
+            fprintf(fid,'#UL%d.obj\n',map(2,index));
+        else
+             fprintf(fid,'#UR%d.obj\n',map(2,index));
+        end
+    end
     fprintf(fid,'%f %f %f\n',rootpoint(i,1),rootpoint(i,2),rootpoint(i,3));
     
     fprintf(fid,'%f %f %f\n',rootnormal(i,1),rootnormal(i,2),rootnormal(i,3));
@@ -167,6 +177,14 @@ end
 scatter3(rootpoint(:,1),rootpoint(:,2),rootpoint(:,3),'r*');
 
 for i=1:size(rootpoint,1)
+    index=find(map(1,:)==i);
+    if(size(index)>0)
+        if(i>9)
+            fprintf(fid,'#LL%d.obj\n',map(2,index));
+        else
+             fprintf(fid,'#LR%d.obj\n',map(2,index));
+        end
+    end
     fprintf(fid,'%f %f %f\n',rootpoint(i,1),rootpoint(i,2),rootpoint(i,3));
     
     fprintf(fid,'%f %f %f\n',rootnormal(i,1),rootnormal(i,2),rootnormal(i,3));
