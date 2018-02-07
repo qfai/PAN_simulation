@@ -40,5 +40,5 @@ markindex=find(BB>=255);
 index=find(BB>1);
 Upoints=zeros(size(index,1),2);
 %Upoints(:,2)=floor(mod(index,size(BB,1)))+ Ts(3)-max(markedpoint(:,2));
-Upoints(:,2)=floor(mod(index,size(BB,1)))+min(U(:,2));%-min(marked(:,2));
+Upoints(:,2)=floor(mod(index,size(BB,1)))+min(U(:,2));%-min(marked(:,2));%+size(paranoimg,1)-max(U(:,2));
 Upoints(:,1)=floor((index-1)/size(BB,1))+1+pixel_point.x(1);

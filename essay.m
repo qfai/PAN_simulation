@@ -1,9 +1,11 @@
 
-name='sx'
+name='qjh'
 savemesh=1;
 %meshpath='D:\volume\volume_data\data\2_000006qianjiahong\c.repairing\';
 load_all;
-
+%special for sx case
+%  U(:,2)=repmat(size(paranoimg,1),[size(U,1),1])-U(:,2);
+% L(:,2)=repmat(size(paranoimg,1),[size(L,1),1])-L(:,2);
 global pointU;
 global pointL;
 global B;
@@ -11,7 +13,7 @@ pointU=featureU.point;
 pointL=featureL.point;
 B=U(:,2)-repmat(U(1,2),[size(U,1),1]);
 fun = @regifun;
-x0 = [25,1,0,1,0]; 
+x0 = [10,1,0,1,0]; 
 x = fsolve(fun,x0);
 
 param=x;
@@ -33,7 +35,7 @@ fun = @regifun2;
 % pointU=pointL;
 % B=L(:,2)-repmat(L(1,2),[size(L,1),1]);
 % fun = @regifun;
-x0 = [25,1,0,1,0]; 
+x0 = [10,1,0,1,0]; 
 x = fsolve(fun,x0);
 scale=param(1)
 a=param(2);%cos(alpha)
@@ -107,8 +109,8 @@ generate_L;
  figure;
   scatter(Lpoints(:,1),size(paranoimg,1)-Lpoints(:,2));hold on;
 scatter(Upoints(:,1),size(paranoimg,1)-Upoints(:,2));hold on;
-scatter(markedu(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(markedu(:,2)+min(U(:,2))),'r*');
-scatter(lmarked(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(lmarked(:,2)+max(L(:,2))-max(lmarked(:,2))),'r*');
+% scatter(markedu(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(markedu(:,2)+min(U(:,2))),'r*');
+% scatter(lmarked(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(lmarked(:,2)+max(L(:,2))-max(lmarked(:,2))),'r*');
 scatter(Lroot(:,1),Lroot(:,2),'r*')
 scatter(U(:,1),size(paranoimg,1)-U(:,2),'b*');
 scatter(L(:,1),size(paranoimg,1)-L(:,2),'b*');

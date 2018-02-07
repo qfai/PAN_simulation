@@ -21,7 +21,7 @@ pixel_count=pixel_count+1;
 if(tooth_number==13)
  sample_number
 end
-markedpoint=[];
+
  %first assume uniform sample
  for i=1:sample_number
  %for i=minx:(maxx-minx)/sample_number:maxx %half
@@ -42,7 +42,7 @@ markedpoint=[];
     else
         k=-1*(dy);
         point1=[tmp.XLimits(2)-tmp.XLimits(1),-1];
-        point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
+        point2=[-1,1];
         point1=line_point(nowpoint,k,point1);
         point2=line_point(nowpoint,k,point2);
         if(floor(point1(2))<=0)
@@ -69,12 +69,6 @@ markedpoint=[];
            tmpk=(secondpoint(2)-firstpoint(2))/(secondpoint(1)-firstpoint(1));
            tmpimg=line_rast(slices,firstpoint,secondpoint,tmpk);
              tmpimg=sum(tmpimg,2);
-            if size(find(tmpimg>254),1)>0
-                index=find(tmpimg>254);
-                for kkk=1:size(index)
-                    markedpoint=[markedpoint;size(generatedimg,2)+1,index(kkk)];
-                end
-            end
            generatedimg=[generatedimg,tmpimg];
     end
    
@@ -121,10 +115,10 @@ pixel_count=pixel_count+1;
         
         point1=[round((tmp.XLimits(2)-tmp.XLimits(1))),-1];
        % point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
-       point2=[-1,1];
+       point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
         point1=line_point(nowpoint,k,point1);
         point2=line_point(nowpoint,k,point2);
-        if(floor(point2(1))<0||floor(point2(1))>round((tmp.XLimits(2)-tmp.XLimits(1))))
+        if(floor(point2(1))<=0||floor(point2(1))>round((tmp.XLimits(2)-tmp.XLimits(1))))
             secondpoint=floor(point1);
         else
             secondpoint=round(point2);
@@ -133,12 +127,6 @@ pixel_count=pixel_count+1;
            tmpk=(secondpoint(2)-firstpoint(2))/(secondpoint(1)-firstpoint(1));
            tmpimg=line_rast(slices,firstpoint,secondpoint,tmpk);
           tmpimg=sum(tmpimg,2);
-            if size(find(tmpimg>254),1)>0
-                index=find(tmpimg>254);
-                for kkk=1:size(index)
-                    markedpoint=[markedpoint;size(generatedimg,2)+1,index(kkk)];
-                end
-            end
            generatedimg=[generatedimg,tmpimg];
     end
    
