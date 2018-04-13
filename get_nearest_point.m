@@ -1,6 +1,16 @@
 function [ x,y,dy ] = get_nearest_point( point,curve)
 %assume the curve is specified
 %   此处显示详细说明
+% x=point(1);
+% lamda=0.1;
+% dx=2*(curve.a*x*x*x*x+curve.b*x*x*x+curve.d*x+curve.e-point(2))*(4*curve.a*x*x*x+3*curve.b*x*x+curve.d)+2*(x-point(1));
+% while(dx>0.2)
+%    x=x-dx*lamda;
+%    dx=2*(curve.a*x*x*x*x+curve.b*x*x*x+curve.d*x+curve.e-point(2))*(4*curve.a*x*x*x+3*curve.b*x*x+curve.d)+2*(x-point(1));
+%     
+% end
+% y=curve.a*x*x*x*x+curve.b*x*x*x+curve.d*x+curve.e;
+%  dy=4*curve.a*x*x*x+3*curve.b*x*x+curve.d;
 x1(1)=point(1);
 i=x1(1);
 x1(2)=curve.a*i*i*i*i+curve.b*i*i*i+curve.d*i+curve.e;

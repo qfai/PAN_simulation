@@ -30,7 +30,7 @@ for i=1:size(Uroot,1)
 %binary search
 left=1;
 right=size(pixel_point.x,1);
-
+%x为轴找到最近的采样点
 while left<right-1
     mid=floor((left+right)/2);
     if( Uroot(i,1)==pixel_point.x(mid))
@@ -92,19 +92,20 @@ scatter3(refpoint(:,1),refpoint(:,2),refpoint(:,3),'r*');
 
 fid=fopen([path,'\','root.txt'],'w');
 
-map=[1,3,5:15,17;[7:-1:1,1:7]];
+map=[1,3,5:15,17;[7:-1:1,1:7]];%use this map need to change i>9 -> i<=9
+% map=[1:6,8,10:15,17;[1:7,1:7]];
 for i=1:size(rootpoint,1)
     index=find(map(1,:)==i);
     if(size(index)>0)
         if(i>9)
-            fprintf(fid,'#UL%d.obj\n',map(2,index));
+            fprintf(fid,'# UR%d.obj\n',map(2,index));
         else
-             fprintf(fid,'#UR%d.obj\n',map(2,index));
+             fprintf(fid,'# UL%d.obj\n',map(2,index));
         end
     end
-    fprintf(fid,'%f %f %f\n',rootpoint(i,1),rootpoint(i,2),rootpoint(i,3));
+    fprintf(fid,'v %f %f %f\n',rootpoint(i,1),rootpoint(i,2),rootpoint(i,3));
     
-    fprintf(fid,'%f %f %f\n',rootnormal(i,1),rootnormal(i,2),rootnormal(i,3));
+    fprintf(fid,'l %f %f %f\n',rootnormal(i,1),rootnormal(i,2),rootnormal(i,3));
 end
 
 
@@ -133,7 +134,7 @@ while left<right-1
 end
     rootpoints(i,1:2)=(projectionpoint(left+1,1:2)-projectionpoint(left,1:2))*(Lroot(i,1)-pixel_point.x(left))/(pixel_point.x(left+1)-pixel_point.x(left))+projectionpoint(left,1:2);
     [rootpoints(i,2),rootpoints(i,1),rootnormal(i,1)]=get_nearest_point( [rootpoints(i,2),rootpoints(i,1)],curve2);
-    rootpoints(i,3)=size(paranoimg,1)-Lroot(i,2)-(max(L(:,2))-size(BB,1))+lz;
+    rootpoints(i,3)=-Lroot(i,2)+max(L(:,2))+max(markpoint(:,3));%size(paranoimg,1)-Lroot(i,2)-(max(L(:,2))-size(BB,1));%+lz;
     rootpoints(i,1)=rootpoints(i,1)-xoffset;
     rootnormal(i,1)=-1/rootnormal(i,1);
     rootnormal(i,2)=1;
@@ -180,13 +181,13 @@ for i=1:size(rootpoint,1)
     index=find(map(1,:)==i);
     if(size(index)>0)
         if(i>9)
-            fprintf(fid,'#LL%d.obj\n',map(2,index));
+            fprintf(fid,'# LR%d.obj\n',map(2,index));
         else
-             fprintf(fid,'#LR%d.obj\n',map(2,index));
+             fprintf(fid,'# LL%d.obj\n',map(2,index));
         end
     end
-    fprintf(fid,'%f %f %f\n',rootpoint(i,1),rootpoint(i,2),rootpoint(i,3));
+    fprintf(fid,'v %f %f %f\n',rootpoint(i,1),rootpoint(i,2),rootpoint(i,3));
     
-    fprintf(fid,'%f %f %f\n',rootnormal(i,1),rootnormal(i,2),rootnormal(i,3));
+    fprintf(fid,'l %f %f %f\n',rootnormal(i,1),rootnormal(i,2),rootnormal(i,3));
 end
 fclose(fid);

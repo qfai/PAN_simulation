@@ -11,6 +11,7 @@ minx=minx(2);
 pixel_count=1;
 xcount=0;
 [minx,yo,dy]=get_nearest_point( [minx,yo],curve2);
+marked=[];
 for tooth_number=14:-1:8
 maxx=featureU.minYpoint(tooth_number,:)*Rs;
 yl=maxx(1);
@@ -40,6 +41,7 @@ end
         
         continue;
     else
+        %k= -1*abs(dy);
         k=-1*(dy);
         point1=[tmp.XLimits(2)-tmp.XLimits(1),-1];
         point2=[-1,1];
@@ -74,7 +76,14 @@ end
    
   
 end
-
+mark=Get_feature_point(markpoint,tooth_number);
+for kk=1:size(mark,1)
+[mark(kk,2),mark(kk,1),dy]=get_nearest_point([mark(kk,2),mark(kk,1)],curve2);
+end
+tmpmark=mark;
+tmpmark(:,2)=mark(:,3)-tmp.ZLimits(1);
+tmpmark(:,1)=(mark(:,2)-minx)/(maxx-minx)*sample_number+size(generatedimg,2)-sample_number;
+marked=[marked;tmpmark(:,1:2)];
 yo=yl;
  minx=maxx;
 end
@@ -102,26 +111,51 @@ pixel_count=pixel_count+1;
         
         continue;
     else
-        k=-1*(dy);
-        point1=[-1,round((tmp.YLimits(2)-tmp.YLimits(1))/2)];
-        point2=[1,-1];
-        point1=line_point(nowpoint,k,point1);
-        point2=line_point(nowpoint,k,point2);
-        if(floor(point1(1))<=0||floor(point1(1))>round((tmp.XLimits(2)-tmp.XLimits(1))))
-            firstpoint=floor(point2);
-        else
-            firstpoint=floor(point1);
-        end
+        %k=abs(dy);
+        k=-1*(dy);%true!
         
-        point1=[round((tmp.XLimits(2)-tmp.XLimits(1))),-1];
-       % point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
-       point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
-        point1=line_point(nowpoint,k,point1);
-        point2=line_point(nowpoint,k,point2);
-        if(floor(point2(1))<=0||floor(point2(1))>round((tmp.XLimits(2)-tmp.XLimits(1))))
-            secondpoint=floor(point1);
+        if(k<0)
+            point1=[-1,floor(size(slices,2))];
+            point2=[1,-1];
+            point1=line_point(nowpoint,k,point1);
+            point2=line_point(nowpoint,k,point2);
+            if(floor(point1(1))<=0||floor(point1(1))>size(slices,1))
+                firstpoint=floor(point2);
+            else
+                firstpoint=floor(point1);
+            end
+            
+            point1=[size(slices,1),-1];
+            %point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
+            point2=[-1,floor(size(slices,2)/2)];
+            point1=line_point(nowpoint,k,point1);
+            point2=line_point(nowpoint,k,point2);
+            if(floor(point2(1))<0||floor(point2(1))>size(slices,1))
+                secondpoint=floor(point1);
+            else
+                secondpoint=floor(point2);
+            end
         else
-            secondpoint=round(point2);
+            point1=[-1,floor(size(slices,2))];
+             point2=[floor(size(slices,1)),-1];
+             point1=line_point(nowpoint,k,point1);
+             point2=line_point(nowpoint,k,point2);
+             if(floor(point1(1))<=0||floor(point1(1))>size(slices,1))
+                 firstpoint=floor(point2);
+             else
+                 firstpoint=floor(point1);
+             end
+             
+             point1=[1,-1];
+            % point2=[-1,round((tmp.YLimits(2)-tmp.YLimits(1)))];
+            point2=[-1,floor(size(slices,2)/2)];
+             point1=line_point(nowpoint,k,point1);
+             point2=line_point(nowpoint,k,point2);
+             if(floor(point2(1))<=0||floor(point2(1))>size(slices,1))
+                 secondpoint=floor(point1);
+             else
+                 secondpoint=floor(point2);
+             end
         end
            theta=180-atan(k);
            tmpk=(secondpoint(2)-firstpoint(2))/(secondpoint(1)-firstpoint(1));
@@ -132,7 +166,14 @@ pixel_count=pixel_count+1;
    
   
 end
-
+mark=Get_feature_point(markpoint,tooth_number);
+for kk=1:size(mark,1)
+[mark(kk,2),mark(kk,1),dy]=get_nearest_point([mark(kk,2),mark(kk,1)],curve2);
+end
+tmpmark=mark;
+tmpmark(:,2)=mark(:,3)-tmp.ZLimits(1);
+tmpmark(:,1)=(mark(:,2)-minx)/(maxx-minx)*sample_number+size(generatedimg,2)-sample_number;
+marked=[marked;tmpmark(:,1:2)];
 yo=yl;
  minx=maxx;
 end
@@ -159,3 +200,30 @@ end
 %  minx=maxx;
 % end
 % scatter(minx,yo); 
+
+%% test k=-dy is true
+%  minx=featureU.maxYpoint(8,:)*Rs;
+%  yo=minx(1);
+%  minx=minx(2);
+%  %plot(curve2,'m');hold on ;
+%  figure;hold on;
+%  scatter(yo,minx,'r*'); 
+%  [minx,yo,dy]=get_nearest_point( [minx,yo],curve2);
+%  for tooth_number=1:7
+%  maxx=featureU.minYpoint(tooth_number,:)*Rs;
+%  yl=maxx(1);
+%  maxx=maxx(2);
+%  scatter(yl,maxx,'r*'); 
+%  [maxx,yl,dy]=get_nearest_point( [maxx,yl],curve2);
+% % maxx
+% % yl
+%  x=maxx;
+%  dy=4*curve2.a*x*x*x+3*curve2.b*x*x+curve2.d;
+%  k=-1*(dy);
+%  plot([yl,yl+10],[x,x+k*10]);
+%   scatter(yo,minx); 
+%  % x=input('pause');
+%   yo=yl;
+%   minx=maxx;
+%  end
+%  scatter(yo,minx); 

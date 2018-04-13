@@ -1,11 +1,47 @@
 
-name='qjh'
-savemesh=1;
-%meshpath='D:\volume\volume_data\data\2_000006qianjiahong\c.repairing\';
+name='sx'
+%savemesh=0;
+reloadmesh=1;
+meshpath='D:\volume\volume_data\data\4_000009sunxia\sunxia-cbctmesh\c.Repairing1\';
+%meshpath='E:\matlab\xray_par\PAN_simulation\data\qjh\qjh\c.repairing\';
 load_all;
 %special for sx case
+
+% pixel_point.x=1.0e+03 *[
+% 
+%     0.8275
+%     0.9575
+%     1.0815
+%     1.1575
+%     1.2315
+%     1.3115
+%     1.3815
+%     1.4595
+%     1.5395
+%     1.6095
+%     1.6935
+%     1.7755
+%     1.8595
+%     1.9835
+%     2.1255];
+% pixel_point.y=[  613.0000
+%   627.0000
+%   639.0000
+%   661.0000
+%   671.0000
+%   671.0000
+%   673.0000
+%   671.0000
+%   673.0000
+%   673.0000
+%   677.0000
+%   677.0000
+%   683.0000
+%   653.0000
+%   639.0000];
 %  U(:,2)=repmat(size(paranoimg,1),[size(U,1),1])-U(:,2);
 % L(:,2)=repmat(size(paranoimg,1),[size(L,1),1])-L(:,2);
+ %% initial pos estimate
 global pointU;
 global pointL;
 global B;
@@ -13,10 +49,11 @@ pointU=featureU.point;
 pointL=featureL.point;
 B=U(:,2)-repmat(U(1,2),[size(U,1),1]);
 fun = @regifun;
-x0 = [10,1,0,1,0]; 
+x0 = [12.5,1,0,1,0]; 
 x = fsolve(fun,x0);
 
 param=x;
+%scale=20;
 scale=param(1)
 a=param(2);%cos(alpha)
 b=param(3);
@@ -35,7 +72,7 @@ fun = @regifun2;
 % pointU=pointL;
 % B=L(:,2)-repmat(L(1,2),[size(L,1),1]);
 % fun = @regifun;
-x0 = [10,1,0,1,0]; 
+x0 = [12.5,1,0,1,0]; 
 x = fsolve(fun,x0);
 scale=param(1)
 a=param(2);%cos(alpha)
@@ -45,7 +82,13 @@ d=param(5);
 Ri=scale*[1,0,0;0,a,-1*b;0,b,a]*[c,0,d;0,1,0;-d,0,c];
 transed=pointL*Ri;
 Ti=[0,L(1,1)-transed(1,2),L(1,2)-transed(1,3)];
+% scale=30;
+% Rs=scale*[1,0,0;0,1,0;0,0,1];
+% Ri=scale*[1,0,0;0,1,0;0,0,1];
 
+
+%%
+%ibbb
 % upoint=featureU.point-repmat(featureU.point(1,:),[size(featureU.point,1),1]);
 % [Rs,Ts,Ri,Ti,SCALE]=RegisterbyIterTheta(featureU.point,U,featureL.point,L);
 Mesh.LL={};
@@ -101,17 +144,26 @@ pixel_size=0.1;
 
 
 generate_U;
+% figure;
+%  pcshow(pointCloud(vertex));
+%  
+ 
 generate_L;
 
+% figure;
+%  pcshow(pointCloud(vertex));
 
-
+%sum(sum(abs(umarked-U)))
 
  figure;
-  scatter(Lpoints(:,1),size(paranoimg,1)-Lpoints(:,2));hold on;
-scatter(Upoints(:,1),size(paranoimg,1)-Upoints(:,2));hold on;
-% scatter(markedu(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(markedu(:,2)+min(U(:,2))),'r*');
-% scatter(lmarked(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(lmarked(:,2)+max(L(:,2))-max(lmarked(:,2))),'r*');
-scatter(Lroot(:,1),Lroot(:,2),'r*')
+scatter(Lpoints(:,1),size(paranoimg,1)-Lpoints(:,2));hold on;
+scatter(Upoints(:,1),size(paranoimg,1)-Upoints(:,2));
+scatter(umarked(:,1),size(paranoimg,1)-umarked(:,2),'r*');
+scatter(lmarked(:,1),size(paranoimg,1)-lmarked(:,2),'r*');
+%scatter(markedu(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(markedu(:,2)+min(U(:,2))),'r*');
+%scatter(lmarked(:,1)+1+pixel_point.x(1),size(paranoimg,1)-(lmarked(:,2)+max(L(:,2))-max(lmarked(:,2))),'r*');
+scatter(pixel_point.x,pixel_point.y,'k*');
+scatter(Uroot(:,1),Uroot(:,2),'r*')
 scatter(U(:,1),size(paranoimg,1)-U(:,2),'b*');
 scatter(L(:,1),size(paranoimg,1)-L(:,2),'b*');
 f=imshow(paranoimg);set(f,'AlphaData',0.5);axis on

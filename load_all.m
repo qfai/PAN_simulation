@@ -8,7 +8,7 @@
 
 if(~exist('name','var')&&~isa(name,'char'))
     disp('do not specify a string name varible');
-    exit();
+    finish();
 end
 if(~exist('user_path','var'))
     path=['data\',name];
@@ -63,13 +63,39 @@ else
 end
 
 
+if(exist('reloadmesh','var')&&reloadmesh==1)
+    
+tmp=readObj([meshpath,'U\UL',num2str(1),'.obj']);
+UL=[{tmp.v(:,1:3)}];
+for i=2:7
+    tmp=readObj([meshpath,'U\UL',num2str(i),'.obj']);
+    UL=[UL,{tmp.v(:,1:3)}];
+end
+UR=[];
+for i=1:7
+    tmp=readObj([meshpath,'U\UR',num2str(i),'.obj']);
+    UR=[ UR,{tmp.v(:,1:3)}];
+end
+tmp=readObj([meshpath,'L\LL',num2str(1),'.obj']);
+LL=[{tmp.v(:,1:3)}];
+for i=2:7
+    tmp=readObj([meshpath,'L\LL',num2str(i),'.obj']);
+    LL=[ LL,{tmp.v(:,1:3)}];
+end
+LR=[];
+for i=1:7
+    tmp=readObj([meshpath,'L\LR',num2str(i),'.obj']);
+    LR=[LR,{tmp.v(:,1:3)}];
+end
+ 
 
+else
 
 mesh_file=[path,'\',name,'mesh.mat'];
 if(~exist(mesh_file,'file'))
     if(~exist('meshpath','var'))
         disp('did not specify meshpath variables');
-        exit();
+        finish();
     end
    % meshpath='D:\volume\volume_data\data\4_000009sunxia\sunxia-cbctmesh\c.Repairing1\';
 tmp=readObj([meshpath,'U\UL',num2str(1),'.obj']);
@@ -101,11 +127,11 @@ end
         mesh.UR=UR;
         save(mesh_file,'-struct','mesh');
     end
-else
+    else
     load(mesh_file);
 end
 
-
+end
 
 
 
